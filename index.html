@@ -4,14 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>News Portal</title>
+    <!-- font awasome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"> 
     <!-- tailwind and dysaiui cdn-->
      <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     
 </head>
 <body>
-    
+    <header class="container mx-auto mt-5">
+        <nav>
+            <div class="navbar bg-base-100 md:flex-row justify-between flex-col gap-4">
+  <div class="grid grid-cols-2 gap-5 ">
+    <a class="btn btn-ghost text-lg font-bold text-blue-700">News</a>
+    <a class="btn btn-ghost text-lg font-bold text-blue-700">Portal</a>
+  </div>
+   <input type="text" placeholder="Search" class="input input-bordered w-50 md:w-auto " />
+  <div class="grid grid-cols-3 gap-10">
+    <button class=" text-lg text-gray-500 font-bold">News</button>
+    <button class="text-lg text-gray-500 font-bold">Blog</button>
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+        <div class="w-10 rounded-full">
+          <img
+            alt="Tailwind CSS Navbar component"
+            src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+        </div>
+      </div>
+     
+    </div>
+   
+  </div>
+  
+</div>
+<hr class="text-gray-400 font-bold my-6">
+        </nav>
 
+        <!-- categories -->
+         <div id="categories" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-5 ">
+         
+         </div>
+
+    </header>
+
+
+    <!-- main -->
+     <main class="container mx-auto my-20">
+      
+      <div class="md:flex justify-between items-center text-center space-y-5 mb-5">
+        <select class="select">
+  <option disabled selected >Sort by View</option>
+  <option>Crimson</option>
+  <option>Amber</option>
+  <option>Velvet</option>
+</select>
+    <div class="text-sm md:text-lg font-semibold
+     text-blue-700 border-blue-500 m-0 flex justify-center items-center gap-x-8">
+       <button class="border rounded-lg px-4 py-1 m-0">
+       Today's Pick
+       </button>
+       <button class="border rounded-lg px-4 py-1 m-0">
+       Trending
+       </button>
+      </div>
+       </div>
+
+       <!-- news card container -->
+        <div id="newsContainer" class="grid grid-cols-1 gap-8 space-y-12 ">
+
+        </div>
+     </main>
     <script src="./index.js"></script>
 </body>
 </html>
