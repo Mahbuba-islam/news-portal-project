@@ -1,8 +1,9 @@
 // All News Category
 // url: https://openapi.programming-hero.com/api/news/categories
  console.log('connected')
+ let allNews = []
 // Fetch all categories
-const allCategories = async () => {
+const loadCategories = async () => {
   const url = 'https://openapi.programming-hero.com/api/news/categories';
   const res = await fetch(url); // use fetch, not res.json(url)
   const data = await res.json(); // parse the response
@@ -19,29 +20,46 @@ const displayCategories = (categories) => {
     const categories = document.createElement('div')
     categories.innerHTML = 
     `
-    
-    <button class="text-gray-500 font-bold text-sm md:text-lg w-full">${category.category_name}</button>
+    <button onClick="handleCategory(this,'${category.category_id}')" class="text-gray-500 category-btn font-bold text-sm md:text-lg w-full">
+    ${category.category_name}</button>
     
     `
+   
     categoriesContainer.appendChild(categories)
+
+    
+
+    
+    
  });
 }
 
 
+// change color when click
+const handleCategory = (button, categoryId) => {
+   document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('bg-blue-500','text-white'))
+   button.classList.add('bg-blue-500','text-white', 'rounded-lg','px-4','py-1')
+   loadNews(categoryId)
+}
 
 // fetch all news card
-const loadNews = async () => {
-  const url = 'https://openapi.programming-hero.com/api/news/category/01'
+const loadNews = async (categoryId) => {
+  const url = `https://openapi.programming-hero.com/api/news/category/${categoryId}`
   const res = await fetch(url)
   const data= await res.json()
-  displayAllNews(data.data)
+  allNews = data.data
+  displayAllNews(allNews)
 }
 
 // display all news
 const displayAllNews = (allNews) => {
   const newsContainer = document.getElementById('newsContainer')
-  allNews.forEach(news  => {
-    const newsCard = document.createElement('div')
+  newsContainer.innerHTML = ''
+ if(allNews.length === 0){
+  newsContainer.innerHTML = ` <h2 class="font-bold text-xl text-center">Oops!! Sorry, There is no content here</h2>`
+ }
+ allNews.forEach(news  => {
+     const newsCard = document.createElement('div')
     newsCard.innerHTML = 
     ` <div class="card lg:card-side bg-base-100 shadow-sm p-4">
   <figure class="">
@@ -51,7 +69,7 @@ const displayAllNews = (allNews) => {
   </figure>
   <div class="card-body lg:w-1/8 p-8 w-full space-y-2">
     <h2 class="card-title">${news.title}</h2>
-    <p class="">${news.details}</p>
+    <p class="">${news.details.slice(0,400)}</p>
     
     <div class=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-center md:gap-10 gap-5">
 
@@ -63,9 +81,13 @@ const displayAllNews = (allNews) => {
     </div>
     </div>
     
-    <p class="text-lg font-bold">
-      <i class="fa-solid fa-eye"></i>
-      ${news.total_view}</p>
+    ${news.total_view ? 
+  `<p class="text-lg font-bold">
+    <i class="fa-solid fa-eye"></i>
+   ${news.total_view}
+  </p>`
+ : ""}
+
 
      <div class="rating">
      ${news.rating.number}
@@ -75,19 +97,141 @@ const displayAllNews = (allNews) => {
   <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" aria-label="4 star" />
   <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" aria-label="5 star" />
 </div>
-      
+     
 
  <i class="fa-solid fa-arrow-right text-primary font-bold text-lg w-full"></i>
 
     </div>
-    
+      <button 
+      class="btn details-btn btn-primary w-1/4 mt-6 mx-auto">Details</button>
  
     </div>
+    
   </div>
+         
+     `
+    // one way of showing modal
+   
+    // another way of showing modal
+  //   const modal = document.getElementById('my_modal_1')
+  //   modal.innerHTML = `
+  //    <div class="modal-box">
+  //   <h3 class="text-lg font-bold">${news.title}</h3>
+  //   <p class="py-4">${news.details}</p>
+  //   <div class="modal-action">
+  //     <form method="dialog">
+  //       <!-- if there is a button in form, it will close the modal -->
+  //       <button class="btn">Close</button>
+  //     </form>
+  //   </div>
+  // </div>
+  //   `
+     // Attach listener after adding the HTML
+    
+  // const detailsButton = newsCard.querySelector('.details-btn');
+  // detailsButton.addEventListener('click', () => showModal(news));
 
-    `
+ 
     newsContainer.appendChild(newsCard)
+     document.querySelector('.details-btn').addEventListener('click', () => showModal(news));
+    
   })
+ 
+  
 }
-allCategories()
-loadNews ()
+
+// search 
+document.getElementById('searchId').addEventListener('keyup', (e) => {
+  loadNews(e.target.value)
+})
+
+// get trending and todays pick btn
+const trendingBtn = document.getElementById('trending')
+const todaysPickBtn = document.getElementById('todaysPick')
+ 
+//  clear active color
+const clearActiveColor = () => {
+  trendingBtn.classList.remove('bg-blue-500','text-white')
+  todaysPickBtn.classList.remove('bg-blue-500', 'text-white')
+}
+    // filter news in todays pick
+  todaysPickBtn.addEventListener('click', () => {
+    clearActiveColor()
+    todaysPickBtn.classList.add('bg-blue-500', 'text-white')
+    const todaysPick = allNews.filter(news => 
+    news.others_info.is_todays_pick
+  )
+ displayAllNews(todaysPick)
+})
+
+
+    // filter news in trending 
+
+trendingBtn.addEventListener('click', ()=> {
+  clearActiveColor()
+  trendingBtn.classList.add('bg-blue-500', 'text-white')
+// trendingBtn.classList.remove('bg-blue-500')
+  const trending = allNews.filter(news => news.others_info.is_trending)
+  displayAllNews(trending)
+})
+
+document.getElementById('sortSelected').addEventListener('change', (e) => {
+  console.log('click');
+  if(e.target.value === 'view'){
+   const sortNews = [...allNews].sort((a, b) => b.total_view - a.total_view);
+   displayAllNews(sortNews);}
+  
+  else if(e.target.value === 'rating'){
+    const sortRating = [...allNews].sort((a,b)=> b.rating.number-a.rating.number)
+    displayAllNews(sortRating)
+  }
+});
+
+
+// one way to go to redirect page
+// go to blog page
+// const blogId = document.getElementById('blog-tab')
+// blogId.addEventListener('click', ()=> {
+//   blogId.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-1', 'rounded-lg')
+//   setTimeout(()=> {
+//    window.location.href = './blog.html'
+//   }, 1000)
+ 
+// })
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const isBlogPage = window.location.pathname.includes('blog.html');
+  const isNewsPage = window.location.pathname.includes('index.html');
+
+  if (isBlogPage) {
+    document.getElementById('blog-tab')?.classList.add('bg-blue-500', 'text-white');
+  } else if (isNewsPage) {
+    document.getElementById('news-tab')?.classList.add('bg-blue-500', 'text-white');
+  }
+});
+
+
+const showModal = (news) => {
+  const modal = document.getElementById('my_modal_1')
+  modal.innerHTML = 
+  `
+   <div class="modal-box">
+    <h3 class="text-lg font-bold">${news.title}</h3>
+    <p class="py-4">${news.details}</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <!-- if there is a button in form, it will close the modal -->
+        <button class="btn">Close</button>
+      </form>
+    </div>
+  </div>
+  `
+  modal.showModal()
+}
+
+
+
+loadCategories ()
+loadNews ('01')
