@@ -87,21 +87,11 @@ const displayAllNews = (allNews) => {
    ${news.total_view}
   </p>`
  : ""}
+ 
+ <div class="dynamic-star-rating"></div>
+ <div class="dynamic-badge"></div>
 
-
-     <div class="rating">
-     ${news.rating.number}
-  <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" aria-label="1 star" />
-  <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" aria-label="2 star" checked="checked" />
-  <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" aria-label="3 star" />
-  <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" aria-label="4 star" />
-  <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" aria-label="5 star" />
-</div>
-     
-
- <i class="fa-solid fa-arrow-right text-primary font-bold text-lg w-full"></i>
-
-    </div>
+  </div>
       <button 
       class="btn details-btn btn-primary w-1/4 mt-6 mx-auto">Details</button>
  
@@ -110,35 +100,84 @@ const displayAllNews = (allNews) => {
   </div>
          
      `
-    // one way of showing modal
    
-    // another way of showing modal
-  //   const modal = document.getElementById('my_modal_1')
-  //   modal.innerHTML = `
-  //    <div class="modal-box">
-  //   <h3 class="text-lg font-bold">${news.title}</h3>
-  //   <p class="py-4">${news.details}</p>
-  //   <div class="modal-action">
-  //     <form method="dialog">
-  //       <!-- if there is a button in form, it will close the modal -->
-  //       <button class="btn">Close</button>
-  //     </form>
-  //   </div>
-  // </div>
-  //   `
-     // Attach listener after adding the HTML
-    
-  // const detailsButton = newsCard.querySelector('.details-btn');
-  // detailsButton.addEventListener('click', () => showModal(news));
-
- 
-    newsContainer.appendChild(newsCard)
-     document.querySelector('.details-btn').addEventListener('click', () => showModal(news));
-    
-  })
- 
   
+    newsContainer.appendChild(newsCard)
+ 
+
+    
+    // star
+    const starContainer = newsCard.querySelector('.dynamic-star-rating')
+    const badgeContainer = newsCard.querySelector('.dynamic-badge')
+        // generate and append stars
+     const stars = createStarRating(news.rating.number)
+     starContainer.appendChild(stars)
+    
+    //  generate and append badge
+    const badge = document.createElement('div')
+    badge.textContent = news.rating.badge
+    badge.className = "text-sm text-gray-600";
+    badgeContainer.appendChild(badge);
+   
+
+// Set event listener for the button
+newsCard.querySelector('.details-btn').addEventListener('click', () => showModal(news));
+
+  })
+   
 }
+
+
+// function for generate star
+function createStarRating(ratingNumber){
+  const starsContainer = document.createElement('div')
+  starsContainer.className = "flex items-center space-x-1 mt-2"
+  for(let i = 1; i<=5; i++){
+    const star = document.createElement('span')
+    star.innerHTML = "*";
+    star.className = 'text-xl font-bold'
+    
+    if(i<=Math.floor(ratingNumber)){
+      star.classList.add("text-yellow-400", "text-lg")
+
+    }
+    else if(i-ratingNumber<=0.5){
+      star.classList.add("text-yellow-200", "text-lg")
+    }
+    else{
+       star.classList.add("text-gray-300", "text-lg");
+    }
+    starsContainer.appendChild(star)
+  }
+  return starsContainer
+}
+
+// rating data 
+// function createStarRating1(ratingNumber) {
+//  console.log(ratingNumber)
+//   const starsContainer = document.createElement("div");
+//   starsContainer.className = "flex items-center space-x-1 mt-2";
+
+//   for (let i = 1; i <= 5; i++) {
+//     const star = document.createElement("span");
+//     star.innerHTML = "★";
+//     star.className = "text-xl";
+    
+//     if (i <= Math.floor(ratingNumber)) {
+//       star.classList.add("text-yellow-400");
+//     } else if (i - ratingNumber <= 0.5) {
+//       star.classList.add("text-yellow-300");
+//     } else {
+//       star.classList.add("text-gray-300");
+//     }
+
+//     starsContainer.appendChild(star);
+//   }
+
+//   return starsContainer;
+// }
+
+
 
 // search 
 document.getElementById('searchId').addEventListener('keyup', (e) => {
@@ -214,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 const showModal = (news) => {
+  console.log(news)
   const modal = document.getElementById('my_modal_1')
   modal.innerHTML = 
   `
@@ -231,6 +271,17 @@ const showModal = (news) => {
   modal.showModal()
 }
 
+// add spiner
+window.addEventListener('DOMContentLoaded', ()=> {
+  const spinerContainer = document.getElementById('spiner-container')
+  spinerContainer.innerHTML = `
+    <span class="loading loading-spinner text-secondary loading-xl ">Loading....</span>
+  `
+//  spiner remove
+ setTimeout(()=> {
+  spinerContainer.remove()
+ },4000)
+})
 
 
 loadCategories ()
